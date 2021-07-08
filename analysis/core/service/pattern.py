@@ -28,12 +28,14 @@ import numpy as np
 from pandas import DataFrame
 
 # In[2]:
-# os.chdir('d:/')
+# os.chdir(os.path.dirname(__file__))
 # In[3]:
 
 # first step is to calculate moving average and moving standard deviation
 # we plus/minus two standard deviations on moving average
 # we get our upper, mid, lower bands
+from analysis.core.constant.fund_data import FundData
+from analysis.lib.utils import get_path
 
 
 def bollinger_bands(df):
@@ -162,9 +164,7 @@ def signal_generation(data, method):
         # note that we put moveon in the condition
         # just in case our signal generation time is contraction period
         # but we don't wanna clear positions right now
-        if (df['cumsum'][i] != 0) and \
-                (df['std'][i] < beta) and \
-                (moveon == False):
+        if (df['cumsum'][i] != 0) and (df['std'][i] < beta) and (moveon is False):
             df.at[i, 'signals'] = -1
             df['cumsum'] = df['signals'].cumsum()
 
@@ -178,23 +178,35 @@ def plot(new: DataFrame, code: str):
     # for a tight and neat figure
     # a and b denotes entry and exit of a trade
     new.drop(new.head(19).index, inplace=True)
-    new.to_csv('../data/raw/_{}_bb.csv'.format(code), index=False, sep=',')
+    new.to_csv(get_path('../data/raw/_{}_bb.csv'.format(code)), index=False, sep=',')
 
+    fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]
     new = new.drop(labels=['signals', 'cumsum', 'coordinates', 'std'], axis=1, inplace=False)
     fig = px.line(new, x="date", y=new.columns, hover_data={"date": "|%Y-%m-%d"})
     # fig.show()
+    fig.update_layout(
+        title='{}({})'.format(fund_name, code),
+        xaxis_title="日期",
+        yaxis_title="累计净值",
+        font=dict(
+            family="微软雅黑",
+            size=16,
+            color="#119DFF"
+        )
+    )
+    fig.write_image(get_path('../data/image/bb/{}-{}.png'.format(fund_name, code)))
     # don't show but save as offline .HTML file
-    plotly.offline.plot(fig, filename='../data/html/bb/{}.html'.format(code))
+    plotly.offline.plot(fig, filename=get_path('../data/html/bb/{}-{}.html'.format(fund_name, code)), auto_open=False)
 
 
 # In[6]:
 
 # ta-da
 def get_bb_data(code):
+    """get bollinger bands data for fund with code"""
     # and i take the average of bid and ask price
-    # 基金
-    df = pd.read_csv('../data/raw/_{}.csv'.format(code))
-    fund_em_value_estimation_df = pd.read_csv('../../data/raw/fund_em_value_estimation_df.csv')
+    df = pd.read_csv(get_path('../data/raw/_{}.csv'.format(code)))
+    # fund_em_value_estimation_df = pd.read_csv('../data/raw/fund_em_value_estimation_df.csv')
     # estimation_line = fund_em_value_estimation_df.loc[fund_em_value_estimation_df['基金代码'] == code]
     # if estimation_line is not None:
     #     df
@@ -207,4 +219,9 @@ def get_bb_data(code):
     new = copy.deepcopy(signals)
     plot(new, code)
 
+
+def get_multiple_bb_data(code_list):
+    """get bollinger bands data for fund in code_list"""
+    for code in code_list:
+        get_bb_data(code)
 
