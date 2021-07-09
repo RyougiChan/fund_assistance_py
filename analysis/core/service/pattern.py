@@ -194,9 +194,9 @@ def plot(new: DataFrame, code: str):
             color="#119DFF"
         )
     )
-    fig.write_image(get_path('../data/image/bb/{}-{}.png'.format(fund_name, code)))
+    fig.write_image(get_path('../data/image/bollinger_bands/{}-{}.png'.format(fund_name, code)))
     # don't show but save as offline .HTML file
-    plotly.offline.plot(fig, filename=get_path('../data/html/bb/{}-{}.html'.format(fund_name, code)), auto_open=False)
+    plotly.offline.plot(fig, filename=get_path('../data/html/bollinger_bands/{}-{}.html'.format(fund_name, code)), auto_open=False)
 
 
 # In[6]:
