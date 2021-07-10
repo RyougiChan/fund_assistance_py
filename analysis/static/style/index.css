@@ -18,12 +18,15 @@ body {
   .app-bar {
     position: absolute;
   }
+::-webkit-scrollbar {display: none;}
 
 iframe {border: none; }
-header {width: 100%;height: 60px;box-shadow:0 0 10px 0 rgba(0,0,0,0.5);position:fixed;top:0;background-color:white;}
+/* header {width: 100%;height: 60px;box-shadow:0 0 10px 0 rgba(0,0,0,0.5);position:fixed;top:0;background-color:white;} */
 .figure-list {list-style:none;}
-.figure-list > li {float:left;width:31%;margin:1%;}
+.figure-list > li {float:left;width:23%;margin:1%;}
 .figure-list > li:hover {box-shadow: 0px 0px 15px 0 #9c9c9c;transform: scale(1.1);}
 .figure-list > li > img {width: 100%;cursor:pointer;}
 .figure {position:fixed;width: 100%;height: 100%;top: 0; left: 0; z-index: 1000;display:none;background:rgba(0,0,0,0.8)}
 .figure>iframe {width:80%;height:80%;margin:5% 10%;}
+.mdc-list.fund-code-list {width: fit-content;height: 70vh;overflow-y: scroll;}
+.demo-card {width: fit-content !important;margin-left: 40px;}

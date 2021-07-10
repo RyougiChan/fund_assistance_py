@@ -13,12 +13,13 @@
 <body>
     <aside class="mdc-drawer mdc-drawer--modal">
         <div class="mdc-drawer__header">
-            <h3 class="mdc-drawer__title">Fund</h3>
+            <h3 class="mdc-drawer__title">基金模拟交易</h3>
             <h6 class="mdc-drawer__subtitle"><a href="https://github.com/ryougichan">RyougiChan</a></h6>
         </div>
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
-                <a class="mdc-list-item mdc-list-item--activated" href="#" aria-current="page" tabindex="0" data-hook="simulation_trade">
+                <a class="mdc-list-item mdc-list-item--activated" href="#" aria-current="page" tabindex="0"
+                    data-hook="simulation_trade">
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">sports_kabaddi</i>
                     <span class="mdc-list-item__text">Simulation Trade</span>
@@ -27,6 +28,11 @@
                     <span class="mdc-list-item__ripple"></span>
                     <i class="material-icons mdc-list-item__graphic" aria-hidden="true">stacked_line_chart</i>
                     <span class="mdc-list-item__text">Bollinger Bands</span>
+                </a>
+                <a class="mdc-list-item" href="#" data-hook="config_section">
+                    <span class="mdc-list-item__ripple"></span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">fact_check</i>
+                    <span class="mdc-list-item__text">Configuration Section</span>
                 </a>
             </nav>
         </div>
@@ -46,79 +52,48 @@
         </header>
 
         <main class="main-content" id="main-content">
-            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="simulation_trade" data-fetch="true">
+            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="simulation_trade" data-fetch="true"
+                data-type="figure">
                 <ul class="figure-list"></ul>
             </div>
-            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="bollinger_bands" data-fetch="false">
-                 <ul class="figure-list"></ul>
+            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="bollinger_bands" data-fetch="false"
+                data-type="figure">
+                <ul class="figure-list"></ul>
             </div>
+            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="config_section"
+                data-fetch="false" data-type="config">
+                <div class="mdc-card demo-card">
+                    <div class="demo-card__primary">
+                        <h2 class="demo-card__title mdc-typography mdc-typography--headline6">已获取数据的基金列表</h2>
+                        <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">by Kurt Wagner
+                        </h3>
+                    </div>
+                    <ul class="mdc-list fund-code-list" role="group" aria-label="List with checkbox items"></ul>
+                    <div class="mdc-card__actions">
+                        <div class="mdc-card__action-buttons">
+                            <button class="mdc-button mdc-card__action mdc-card__action--button"
+                                data-action="remove-config-fund"> <span class="mdc-button__ripple"></span> 移除</button>
+                            <button class="mdc-button mdc-card__action mdc-card__action--button"
+                                data-action="add-config-fund"> <span class="mdc-button__ripple"></span> 添加</button>
+                        </div>
+                    </div>
+                </div>
         </main>
     </div>
 
     <div class="figure">
         <iframe></iframe>
     </div>
+
+    <div class="mdc-snackbar">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false"></div>
+        </div>
+    </div>
+    {% csrf_token %}
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
-    <script>
-        const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('app-bar'));
-        const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
-        topAppBar.setScrollTarget(document.getElementById('main-content'));
-        topAppBar.listen('MDCTopAppBar:nav', () => {
-            drawer.open = !drawer.open;
-        });
-        $('.mdc-drawer .mdc-list').on('click', function(e) {
-            drawer.open = false;
-            if (e.target.nodeName === 'A') {
-                console.log($('.figure--activated'));
-                $('.figure--activated').fadeOut();
-                $('.figure--activated').removeClass('figure--activated')
-                $('.mdc-top-app-bar__title').text($(e.target).find('.mdc-list-item__text').text());
-                let $nextActivate = $('.figure-container[data-hook='+$(e.target).attr('data-hook')+']');
-                $nextActivate.addClass('figure--activated');
-                if($nextActivate.attr('data-fetch') !== 'true') {
-                    $nextActivate.attr('data-fetch', 'true');
-                    R.getData($nextActivate.attr('data-hook'));
-                }
-                $nextActivate.fadeIn();
-
-            }
-        });
-        $(document.body).on('MDCDrawer:closed', () => {
-            $('.main-content').find('input, button').focus();
-        });
-        $('.figure-list').on('click', '.figure-thumbnail', function (e) {
-            let name = $(this).attr('title').split('.')[0];
-            $('.figure>iframe').attr('src', `/static/html/${$(this).attr('data-type')}/${name}.html`);
-            $('.figure').fadeIn();
-        });
-        $('.figure').on('click', function (e) {
-            if (e.currentTarget.nodeName !== 'IFRAME') {
-                $(this).fadeOut();
-            }
-        });
-        R = {
-            getData(name) {
-                $.ajax({
-                    url: '/analysis/api/data/' + name,
-                    method: 'GET',
-                    success(resp) {
-                        let $nextActivate = $('.figure-container[data-hook='+name+']');
-                        resp.data.forEach(n => {
-                            $nextActivate.find('.figure-list').append(`<li><img class="figure-thumbnail" src="/static/image/${name}/${n}.png" title="${n}" data-type="${name}" /></li>`);
-                            $nextActivate.attr('data-fetch', 'true');
-                        });
-                        
-                        if(!$nextActivate.hasClass('figure--activated')) {
-                            $nextActivate.addClass('figure--activated')
-                        };
-                    }
-                })
-            }
-        }
-        R.getData('simulation_trade');
-        
-    </script>
+    <script src="/static/script/index.js"></script>
 </body>
 
 </html>
