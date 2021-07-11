@@ -28,7 +28,7 @@ def test_generate_html():
 
 
 def test_read_yml():
-    with open(get_path('../app_config.yml'), encoding='utf-8') as fs:
+    with open(get_path('app_config.yml'), encoding='utf-8') as fs:
         data = yaml.safe_load(fs)
         print(data)
         print(data["fund"])

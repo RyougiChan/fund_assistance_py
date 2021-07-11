@@ -44,7 +44,7 @@ class SimulationTrade:
 
         for code in code_list:
             # 获取累计净值
-            fund_em_info_df_total_net_worth = pd.read_csv(get_path('../data/raw/_' + code + '.csv'))[
+            fund_em_info_df_total_net_worth = pd.read_csv(get_path('data/raw/_' + code + '.csv'))[
                 ["净值日期", "累计净值"]]
             fund_em_info.update({code: fund_em_info_df_total_net_worth})
             depot.update({code: SimulationTrade.start_money})
@@ -164,8 +164,8 @@ class SimulationTrade:
                 )
             )
             m_fig.update_xaxes(dtick="M1", tickformat="%d\n%b")
-            m_fig.write_image(get_path('../data/image/simulation_trade/{}-{}.png'.format(fund_name, code)))
-            plotly.offline.plot(m_fig, filename=get_path('../data/html/simulation_trade/{}-{}.html'.format(fund_name, code)), auto_open=False)
+            m_fig.write_image(get_path('data/image/simulation_trade/{}-{}.png'.format(fund_name, code)))
+            plotly.offline.plot(m_fig, filename=get_path('data/html/simulation_trade/{}-{}.html'.format(fund_name, code)), auto_open=False)
 
         # 清算
         # 账户结余

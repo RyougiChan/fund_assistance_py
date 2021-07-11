@@ -178,7 +178,7 @@ def plot(new: DataFrame, code: str):
     # for a tight and neat figure
     # a and b denotes entry and exit of a trade
     new.drop(new.head(19).index, inplace=True)
-    new.to_csv(get_path('../data/raw/_{}_bb.csv'.format(code)), index=False, sep=',')
+    new.to_csv(get_path('data/raw/_{}_bb.csv'.format(code)), index=False, sep=',')
 
     fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]
     new = new.drop(labels=['signals', 'cumsum', 'coordinates', 'std'], axis=1, inplace=False)
@@ -194,9 +194,9 @@ def plot(new: DataFrame, code: str):
             color="#119DFF"
         )
     )
-    fig.write_image(get_path('../data/image/bollinger_bands/{}-{}.png'.format(fund_name, code)))
+    fig.write_image(get_path('data/image/bollinger_bands/{}-{}.png'.format(fund_name, code)))
     # don't show but save as offline .HTML file
-    plotly.offline.plot(fig, filename=get_path('../data/html/bollinger_bands/{}-{}.html'.format(fund_name, code)), auto_open=False)
+    plotly.offline.plot(fig, filename=get_path('data/html/bollinger_bands/{}-{}.html'.format(fund_name, code)), auto_open=False)
 
 
 # In[6]:
@@ -205,7 +205,7 @@ def plot(new: DataFrame, code: str):
 def get_bb_data(code):
     """get bollinger bands data for fund with code"""
     # and i take the average of bid and ask price
-    df = pd.read_csv(get_path('../data/raw/_{}.csv'.format(code)))
+    df = pd.read_csv(get_path('data/raw/_{}.csv'.format(code)))
     # fund_em_value_estimation_df = pd.read_csv('../data/raw/fund_em_value_estimation_df.csv')
     # estimation_line = fund_em_value_estimation_df.loc[fund_em_value_estimation_df['基金代码'] == code]
     # if estimation_line is not None:

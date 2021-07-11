@@ -36,7 +36,7 @@ def index(request):
         SimulationTrade.init()
         SimulationTrade.start_multiple_simulation_trade(code_list)
 
-    simulate_trade_data = os.listdir(get_path('../data/image/simulation_trade'))
+    simulate_trade_data = os.listdir(get_path('data/image/simulation_trade'))
     context = {'simulate_trade_data': simulate_trade_data}
 
     print(simulate_trade_data)

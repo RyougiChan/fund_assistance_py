@@ -52,23 +52,28 @@
         </header>
 
         <main class="main-content" id="main-content">
-            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="simulation_trade" data-fetch="true"
-                data-type="figure">
+            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="simulation_trade"
+                data-type="figure" style="display: block;">
                 <ul class="figure-list"></ul>
             </div>
-            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="bollinger_bands" data-fetch="false"
+            <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="bollinger_bands"
                 data-type="figure">
                 <ul class="figure-list"></ul>
             </div>
             <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="config_section"
-                data-fetch="false" data-type="config">
+                data-type="config">
                 <div class="mdc-card demo-card">
                     <div class="demo-card__primary">
                         <h2 class="demo-card__title mdc-typography mdc-typography--headline6">已获取数据的基金列表</h2>
-                        <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">by Kurt Wagner
+                        <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">from cache
                         </h3>
                     </div>
                     <ul class="mdc-list fund-code-list" role="group" aria-label="List with checkbox items"></ul>
+                    <div class="mdc-text-field" id="add-new-fund-codes">
+                        <input class="mdc-text-field__input" id="text-field-hero-input" pattern="^(\d{6},)+$">
+                        <div class="mdc-line-ripple"></div>
+                        <label for="text-field-hero-input" class="mdc-floating-label">基金代码</label>
+                    </div>
                     <div class="mdc-card__actions">
                         <div class="mdc-card__action-buttons">
                             <button class="mdc-button mdc-card__action mdc-card__action--button"
