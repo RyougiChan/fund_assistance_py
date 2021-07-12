@@ -180,7 +180,9 @@ def plot(new: DataFrame, code: str):
     new.drop(new.head(19).index, inplace=True)
     new.to_csv(get_path('data/raw/_{}_bb.csv'.format(code)), index=False, sep=',')
 
-    fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]
+    fund_name = ''
+    if os.path.exists(get_path('data/raw/fund_em_fund_name_df.csv')):
+        fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]
     new = new.drop(labels=['signals', 'cumsum', 'coordinates', 'std'], axis=1, inplace=False)
     fig = px.line(new, x="date", y=new.columns, hover_data={"date": "|%Y-%m-%d"})
     # fig.show()
@@ -197,10 +199,10 @@ def plot(new: DataFrame, code: str):
     fig.write_image(get_path('data/image/bollinger_bands/{}-{}.png'.format(fund_name, code)))
     # don't show but save as offline .HTML file
     plotly.offline.plot(fig, filename=get_path('data/html/bollinger_bands/{}-{}.html'.format(fund_name, code)), auto_open=False)
+    print('{}完成'.format(code))
 
 
 # In[6]:
-
 # ta-da
 def get_bb_data(code):
     """get bollinger bands data for fund with code"""
@@ -222,6 +224,8 @@ def get_bb_data(code):
 
 def get_multiple_bb_data(code_list):
     """get bollinger bands data for fund in code_list"""
+    print(code_list)
     for code in code_list:
+        print('生成布林带数据{}'.format(code))
         get_bb_data(code)
 

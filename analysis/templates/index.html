@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Trade</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
     <link href="/static/style/material-components.min.css" rel="stylesheet">
     <link href="/static/style/material-icon.css" rel="stylesheet">
@@ -50,19 +51,18 @@
                 </section>
             </div>
         </header>
-
         <main class="main-content" id="main-content">
             <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="simulation_trade"
                 data-type="figure" style="display: block;">
-                <ul class="figure-list"></ul>
+                <ul class="mdc-list figure-list"></ul>
             </div>
             <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="bollinger_bands"
                 data-type="figure">
-                <ul class="figure-list"></ul>
+                <ul class="mdc-list figure-list"></ul>
             </div>
             <div class="mdc-top-app-bar--fixed-adjust figure-container" data-hook="config_section"
                 data-type="config">
-                <div class="mdc-card demo-card">
+                <div class="mdc-card demo-card fund-code-list-card">
                     <div class="demo-card__primary">
                         <h2 class="demo-card__title mdc-typography mdc-typography--headline6">已获取数据的基金列表</h2>
                         <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">from cache
@@ -83,11 +83,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </main>
     </div>
 
     <div class="figure">
         <iframe></iframe>
+        <button class="material-icons mdc-icon-button" data-action="close-frame">close</button>
     </div>
 
     <div class="mdc-snackbar">

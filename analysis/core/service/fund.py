@@ -8,8 +8,6 @@ import akshare as ak
 import pandas as pd
 from datetime import datetime
 
-import yaml
-
 from analysis.conf.yconfig import YConfig
 from analysis.core.service.pattern import get_multiple_bb_data
 from analysis.lib.utils import get_path
@@ -22,7 +20,7 @@ def test_fund_path():
     print(os.stat(get_path('data/raw')))
 
 
-def init_data(fund_codes):
+def init_data(fund_codes=None):
     if fund_codes is None:
         fund_codes = YConfig.get('fund:code_list')
     if fund_codes is not None:
@@ -32,8 +30,6 @@ def init_data(fund_codes):
 
 
 def fetch_fund_data(fund_codes: list):
-    x = os.getcwd()
-    y = os.path.abspath(__file__)
     """获取日净值和累计净值"""
     fund_em_fund_name_df = ak.fund_em_fund_name()
     fund_em_fund_name_df.to_csv(get_path('data/raw/fund_em_fund_name_df.csv'), index=True, sep=",")

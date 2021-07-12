@@ -53,7 +53,21 @@ $(
         };
         let initFigureList = ($nextActivate, name, data) => {
             data.forEach(n => {
-                $nextActivate.find('.figure-list').append(`<li><img class="figure-thumbnail" src="/static/image/${name}/${n}.png" title="${n}" data-type="${name}" /></li>`);
+                $nextActivate.find('.figure-list')
+                    // .append(`<li><img class="figure-thumbnail" src="/static/image/${name}/${n}.png" title="${n}" data-type="${name}" /></li>`)
+                    .append(`
+                    <li data-title="${n}" data-type="${name}">
+                        <div class="mdc-card demo-card">
+                            <div class="mdc-card__primary-action demo-card__primary-action" tabindex="0">
+                                <div class="mdc-card__media mdc-card__media--16-9 demo-card__media" style="background-image: url(&quot;/static/image/${name}/${n}.png&quot;);"></div>
+                                <div class="demo-card__primary">
+                                <h2 class="demo-card__title mdc-typography mdc-typography--headline6">${n.split('-')[0]}</h2>
+                                <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">${n.split('-')[1]}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    `);
             });
 
             if (!$nextActivate.hasClass('page--activated')) {
@@ -160,8 +174,8 @@ $(
         $(document.body).on('MDCDrawer:closed', () => {
             $('.main-content').find('input, button').focus();
         });
-        $('.figure-list').on('click', '.figure-thumbnail', function (e) {
-            let name = $(this).attr('title').split('.')[0];
+        $('.figure-list').on('click', 'li', function (e) {
+            let name = $(this).attr('data-title');
             $('.figure>iframe').attr('src', `/static/html/${$(this).attr('data-type')}/${name}.html`);
             $('.figure').fadeIn();
         });
