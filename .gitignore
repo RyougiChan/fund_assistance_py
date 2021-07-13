@@ -30,4 +30,6 @@ build/
 ### VS Code ###
 .vscode/
 venv
-/fund_assistance_py/analysis/data/**
+
+### Static Data ###
+/fund_assistance_py/analysis/data/
