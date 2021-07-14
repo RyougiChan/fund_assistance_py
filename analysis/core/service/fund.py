@@ -30,15 +30,26 @@ def init_data(fund_codes=None):
 
 
 def fetch_fund_data(fund_codes: list):
+    today_zero = datetime(now.year, now.month, now.day).timestamp()
     """获取日净值和累计净值"""
-    fund_em_fund_name_df = ak.fund_em_fund_name()
-    fund_em_fund_name_df.to_csv(get_path('data/raw/fund_em_fund_name_df.csv'), index=True, sep=",")
+    if os.path.exists(get_path('data/raw/fund_em_fund_name_df.csv')) is False or os.path.getmtime(
+            get_path('data/raw/fund_em_fund_name_df.csv')) < today_zero:
+        fund_em_fund_name_df = ak.fund_em_fund_name()
+        fund_em_fund_name_df.to_csv(get_path('data/raw/fund_em_fund_name_df.csv'), index=True, sep=",")
     for code in fund_codes:
         print('开始获取数据', code)
-        new_data_z = ak.fund_em_open_fund_info(fund=code, indicator="累计净值走势")
-        new_data_z.to_csv(get_path('data/raw/_' + code + '.csv'), index=False, sep=",")
-        new_data_t = ak.fund_em_open_fund_info(fund=code, indicator="单位净值走势")
-        new_data_t.to_csv(get_path('data/raw/__' + code + '.csv'), index=False, sep=",")
+        path_1 = get_path('data/raw/_' + code + '.csv')
+        path_2 = get_path('data/raw/__' + code + '.csv')
+        if os.path.exists(path_1) is False or os.path.getmtime(path_1) < today_zero:
+            new_data_z = ak.fund_em_open_fund_info(fund=code, indicator="累计净值走势")
+            new_data_z.to_csv(get_path('data/raw/_' + code + '.csv'), index=False, sep=",")
+        else:
+            print('数据', path_1, '已更新过')
+        if os.path.exists(path_2) is False or os.path.getmtime(path_2) < today_zero:
+            new_data_t = ak.fund_em_open_fund_info(fund=code, indicator="单位净值走势")
+            new_data_t.to_csv(get_path('data/raw/__' + code + '.csv'), index=False, sep=",")
+        else:
+            print('数据', path_2, '已更新过')
     print('数据更新完毕：' + str(now))
 
 

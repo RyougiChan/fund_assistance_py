@@ -20,6 +20,8 @@
 # https://www.tradingview.com/wiki/Bollinger_Bands_(BB)
 
 import os
+from threading import Thread
+
 import pandas as pd
 import plotly
 import plotly.express as px
@@ -35,7 +37,8 @@ from pandas import DataFrame
 # we plus/minus two standard deviations on moving average
 # we get our upper, mid, lower bands
 from analysis.core.constant.fund_data import FundData
-from analysis.lib.utils import get_path
+from analysis.core.service.aliyun_oss import AliyunOss
+from analysis.lib.utils import get_path, absolute_file_paths
 
 
 def bollinger_bands(df):
@@ -229,3 +232,7 @@ def get_multiple_bb_data(code_list):
         print('生成布林带数据{}'.format(code))
         get_bb_data(code)
 
+    t1 = Thread(target=AliyunOss.put_objects, args=('html/bollinger_bands/', absolute_file_paths(get_path('data/html/bollinger_bands')),))
+    t2 = Thread(target=AliyunOss.put_objects, args=('image/bollinger_bands/', absolute_file_paths(get_path('data/image/bollinger_bands')),))
+    t1.start()
+    t2.start()

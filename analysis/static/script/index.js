@@ -5,6 +5,7 @@ $(
         const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
         const snackbar = mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
         const textField = mdc.textField.MDCTextField.attachTo(document.querySelector('#add-new-fund-codes'));
+        const linearProgress = mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
         topAppBar.setScrollTarget(document.getElementById('main-content'));
         topAppBar.listen('MDCTopAppBar:nav', () => {
             drawer.open = !drawer.open;
@@ -22,6 +23,46 @@ $(
                 }
             };
         })();
+        let getStsAccessCredential = (async = true) => {
+            let result;
+            if (localStorage.getItem('cirno-fund-oss-credential')) {
+                result = JSON.parse(localStorage.getItem('cirno-fund-oss-credential'));
+
+                return;
+            }
+            
+            $.ajax({
+                url: 'api/security/credential',
+                method: 'GET',
+                async: async,
+                success(resp) {
+                    result = resp.Credentials;
+                    store = new OSS({
+                        accessKeyId: result.AccessKeyId,
+                        accessKeySecret: result.AccessKeySecret,
+                        stsToken: result.SecurityToken,
+                        region: 'oss-cn-hongkong',
+                        bucket: 'cirno-fund-assistance'
+                    });
+                    localStorage.setItem('cirno-fund-oss-credential', JSON.stringify(resp.Credentials));
+                }
+            });
+        };
+        
+        let getSignedUrl = (file) => {
+            if (!store) {
+                getStsAccessCredential(false);
+                let result = JSON.parse(localStorage.getItem('cirno-fund-oss-credential'));
+                store = new OSS({
+                    accessKeyId: result.AccessKeyId,
+                    accessKeySecret: result.AccessKeySecret,
+                    stsToken: result.SecurityToken,
+                    region: 'oss-cn-hongkong',
+                    bucket: 'cirno-fund-assistance'
+                });
+            }
+            return store.signatureUrl(file).replace('http://cirno-fund-assistance.oss-cn-hongkong.aliyuncs.com', 'http://oss.cirnon.com');
+        }
         // 初始化第三页的基金列表
         let initCodeList = (fund_codes, fund_names) => {
             let i = 0;
@@ -59,7 +100,7 @@ $(
                     <li data-title="${n}" data-type="${name}">
                         <div class="mdc-card demo-card">
                             <div class="mdc-card__primary-action demo-card__primary-action" tabindex="0">
-                                <div class="mdc-card__media mdc-card__media--16-9 demo-card__media" style="background-image: url(&quot;/static/image/${name}/${n}.png&quot;);"></div>
+                                <div class="mdc-card__media mdc-card__media--16-9 demo-card__media" style="background-image: url(&quot;${getSignedUrl('image/'+name+'/'+n+'.png')}&quot;);"></div>
                                 <div class="demo-card__primary">
                                 <h2 class="demo-card__title mdc-typography mdc-typography--headline6">${n.split('-')[0]}</h2>
                                 <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">${n.split('-')[1]}</h3>
@@ -76,7 +117,7 @@ $(
         };
         // 获取分析图表
         let getFigureData = (name) => {
-            let data = localStorage.getItem('ryougi-fund-simulation-config');
+            let data = localStorage.getItem('cirno-fund-simulation-config');
             let $nextActivate = $('.figure-container[data-hook=' + name + ']');
             if (data) {
                 let res = [],
@@ -94,7 +135,7 @@ $(
                 R.showSnackbar('所加代码列表为空');
                 return;
             }
-            let localSimulationConfig = localStorage.getItem('ryougi-fund-simulation-config');
+            let localSimulationConfig = localStorage.getItem('cirno-fund-simulation-config');
             let fixed_codes = [];
             if (localSimulationConfig) {
                 let lsc = JSON.parse(localSimulationConfig),
@@ -114,7 +155,7 @@ $(
                             if (resp.data) {
                                 lsc.fund.code_list = lsc.fund.code_list.concat(resp.data.fund.code_list);
                                 lsc.fund.code_name_list = lsc.fund.code_name_list.concat(resp.data.fund.code_name_list);
-                                localStorage.setItem('ryougi-fund-simulation-config', JSON.stringify(lsc));
+                                localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(lsc));
                                 initCodeList(resp.data.fund.code_list, resp.data.fund.code_name_list);
                                 R.showSnackbar("添加成功");
                             } else {
@@ -131,8 +172,8 @@ $(
         // 获取配置
         let getConfigData = () => {
             let config;
-            if (localStorage.getItem('ryougi-fund-simulation-config')) {
-                config = JSON.parse(localStorage.getItem('ryougi-fund-simulation-config'));
+            if (localStorage.getItem('cirno-fund-simulation-config')) {
+                config = JSON.parse(localStorage.getItem('cirno-fund-simulation-config'));
                 initCodeList(config.fund.code_list, config.fund.code_name_list);
             } else {
                 $.ajax({
@@ -142,13 +183,14 @@ $(
                         let fund_codes = resp.data.fund.code_list,
                             fund_names = resp.data.fund.code_name_list;
                         if (fund_codes) {
-                            localStorage.setItem('ryougi-fund-simulation-config', JSON.stringify(resp.data));
+                            localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(resp.data));
                             initCodeList(fund_codes, fund_names);
                         }
                     }
                 });
             }
         };
+        let store;
 
         $('.mdc-drawer .mdc-list').on('click', function (e) {
             drawer.open = false;
@@ -158,7 +200,7 @@ $(
                 $('.mdc-top-app-bar__title').text($(e.target).find('.mdc-list-item__text').text());
                 let $nextActivate = $('.figure-container[data-hook=' + $(e.target).attr('data-hook') + ']');
                 $nextActivate.addClass('page--activated');
-                if (!localStorage.getItem('ryougi-fund-simulation-config')) {
+                if (!localStorage.getItem('cirno-fund-simulation-config')) {
                     getConfigData();
                 }
 
@@ -176,7 +218,8 @@ $(
         });
         $('.figure-list').on('click', 'li', function (e) {
             let name = $(this).attr('data-title');
-            $('.figure>iframe').attr('src', `/static/html/${$(this).attr('data-type')}/${name}.html`);
+            // /static/html/${$(this).attr('data-type')}/${name}.html
+            $('.figure>iframe').attr('src', `${getSignedUrl('html/' + $(this).attr('data-type') + '/' + name + '.html')}`);
             $('.figure').fadeIn();
         });
         $('.figure').on('click', function (e) {
@@ -191,7 +234,7 @@ $(
                 return;
             }
             let data = [...$collected].map(ele => $(ele).parents('.mdc-list-item').children('.mdc-list-item__text').text().trim()),
-                config = JSON.parse(localStorage.getItem('ryougi-fund-simulation-config')),
+                config = JSON.parse(localStorage.getItem('cirno-fund-simulation-config')),
                 code_list = config.fund.code_list,
                 code_name_list = config.fund.code_name_list;
             data.forEach(d => {
@@ -204,7 +247,7 @@ $(
             });
             config.fund.code_list = code_list;
             config.fund.code_name_list = code_name_list;
-            localStorage.setItem('ryougi-fund-simulation-config', JSON.stringify(config));
+            localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(config));
             [...$collected].forEach(ele => $(ele).parents('.mdc-list-item').remove());
             R.showSnackbar('移除子项成功');
         };
@@ -215,9 +258,42 @@ $(
             }
             addFigureData(textField.value.split(','));
         };
+        let updateAllSignal = () => {
+            let localSimulationConfig = localStorage.getItem('cirno-fund-simulation-config');
+            if (localSimulationConfig) {
+                let lsc = JSON.parse(localSimulationConfig),
+                    local_code_list = lsc.fund.code_list;
+
+                if (local_code_list.length) {
+                    linearProgress.open();
+                    $.ajax({
+                        url: '/analysis/api/data/figure',
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() },
+                        contentType: 'application/json;charset=utf-8',
+                        data: JSON.stringify(local_code_list),
+                        success(resp) {
+                            if (resp.data) {
+                                R.showSnackbar("更新成功");
+                            } else {
+                                R.showSnackbar("Nothing update!");
+                            }
+                            linearProgress.close();
+                        },
+                        error() {
+                            R.showSnackbar("Nothing update!");
+                            linearProgress.close();
+                        }
+                    });
+                } else {
+                    R.showSnackbar("Nothing to change!");
+                }
+            }
+        }
         const CLICK_HANDER = new Map()
             .set('remove-config-fund', removeConfigFund)
-            .set('add-config-fund', addConfigFund);
+            .set('add-config-fund', addConfigFund)
+            .set('update-all-signal', updateAllSignal);
         $('button').on('click', function () {
             let action = $(this).attr('data-action');
 
@@ -225,6 +301,5 @@ $(
         });
         getConfigData();
         getFigureData('simulation_trade');
-
     }
 );

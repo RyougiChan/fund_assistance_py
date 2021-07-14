@@ -1,11 +1,13 @@
 import json
 import os
+import sys
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from analysis.conf.yconfig import YConfig
 from analysis.core.constant.fund_data import FundData
+from analysis.core.service.aliyun_oss import AliyunOss
 from analysis.core.service.fund import init_data
 from analysis.core.service.simulation_trade import SimulationTrade
 from analysis.lib.utils import get_path
@@ -64,4 +66,8 @@ def get_simulation_trade_figure(request):
         json_result = json.loads(post_body)
         print(json_result)
 
+
+def get_sts_access_cred(request):
+    response = AliyunOss.get_sts_access_credential(sys.argv[1:])
+    return JsonResponse(response.body.to_map(), safe=False)
 

@@ -1,15 +1,29 @@
 import os
+from datetime import timedelta, datetime
 from threading import Thread
 
 import akshare as ak
 
 from django.apps import AppConfig
+from timeloop import Timeloop
 
 from analysis.conf.yconfig import YConfig
-from analysis.core.service.fund import fetch_fund_data
+from analysis.core.service.fund import fetch_fund_data, init_data
 from analysis.core.service.pattern import get_multiple_bb_data
 from analysis.core.service.simulation_trade import SimulationTrade
 from analysis.lib.utils import get_path
+
+# 定时任务
+t_loop = Timeloop()
+
+
+@t_loop.job(interval=timedelta(hours=1))
+def sample_job_every_1h():
+    now = datetime.now()
+    if 12 < now.hour < 14:
+        init_data()
+        SimulationTrade.init()
+        SimulationTrade.start_multiple_simulation_trade(YConfig.get('fund:code_list'))
 
 
 class AnalysisConfig(AppConfig):
@@ -36,3 +50,7 @@ class AnalysisConfig(AppConfig):
         get_multiple_bb_data(fund_codes)
         t = Thread(target=SimulationTrade.start_multiple_simulation_trade, args=(fund_codes,))
         t.start()
+
+    # 启动定时任务
+    # t_loop.start(block=True)
+
