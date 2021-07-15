@@ -1,16 +1,18 @@
 import json
-import os
 import sys
+from datetime import datetime, timedelta
 
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+import jwt
+from django.http import JsonResponse, HttpResponseBadRequest
 
 from analysis.conf.yconfig import YConfig
+from analysis.core.chives import add_chives
 from analysis.core.constant.fund_data import FundData
+from analysis.core.errors import Errors
 from analysis.core.service.aliyun_oss import AliyunOss
 from analysis.core.service.fund import init_data
 from analysis.core.service.simulation_trade import SimulationTrade
-from analysis.lib.utils import get_path
+from analysis.models import Chives
 
 
 def figure_data(request):
@@ -33,17 +35,19 @@ def figure_data(request):
                 'code_name_list': code_name_list
             }
         }})
-    return JsonResponse({})
+    return JsonResponse(Errors.REQUEST_METHOD_ILLEGAL.__dict__)
 
 
 def get_config_data():
-    config = YConfig.get()
+    config = {'fund': YConfig.get('fund')}
     code_name_list = []
     for code in config['fund']['code_list']:
         fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]
         code_name_list.append(fund_name)
     config['fund']['code_name_list'] = code_name_list
-    return JsonResponse({'data': config}, json_dumps_params={'ensure_ascii': False})
+    resp = Errors.SUCCESS.__dict__
+    resp['data'] = config
+    return JsonResponse(resp, json_dumps_params={'ensure_ascii': False})
 
 
 handle_config_data = {
@@ -55,19 +59,40 @@ def config_data(request):
     return handle_config_data[request.method]()
 
 
-def get_simulation_trade_figure(request):
-    if request.method == 'POST':
-        print('post request')
-        concat = request.POST
-        post_body = request.body
-        print(concat)
-        print(type(post_body))
-        print(post_body)
-        json_result = json.loads(post_body)
-        print(json_result)
-
-
 def get_sts_access_cred(request):
     response = AliyunOss.get_sts_access_credential(sys.argv[1:])
-    return JsonResponse(response.body.to_map(), safe=False)
+    resp = Errors.SUCCESS.__dict__
+    resp['data'] = response.body.to_map()
+    return JsonResponse(resp)
 
+
+def chives_handler(request, action: str):
+    if request.method == 'POST':
+        post_data = json.loads(request.body)
+        if action == 'signin':
+            if Chives.objects.filter(login_name=post_data['login_name']).count() == 0:
+                return JsonResponse(Errors.NOT_FOUND.__dict__)
+
+            chives = Chives.objects.get(login_name=post_data['login_name'])
+            if chives.match_password(post_data['login_password']) is False:
+                return JsonResponse(Errors.NOT_FOUND.__dict__)
+
+            payload = {
+                'chives_id': chives.id,
+                'exp': datetime.utcnow() + timedelta(seconds=YConfig.get('jwt:expire_time_seconds'))
+            }
+            jwt_token = jwt.encode(payload, YConfig.get('jwt:secret'), YConfig.get('jwt:algorithm'))
+            resp = JsonResponse(Errors.SUCCESS.__dict__)
+            resp.headers['authorization'] = jwt_token
+            return resp
+        if action == 'signout':
+            return JsonResponse(Errors.SUCCESS.__dict__)
+    return JsonResponse(Errors.REQUEST_METHOD_ILLEGAL.__dict__)
+
+
+def test(request, name):
+    if name == 'add-chives':
+        a = add_chives('cirno', 'cirno0207')
+        print(a)
+        return JsonResponse(Errors.SUCCESS.__dict__)
+    return JsonResponse(Errors.REQUEST_ACTION_ILLEGAL.__dict__)

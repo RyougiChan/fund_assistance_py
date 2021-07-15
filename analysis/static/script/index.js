@@ -27,24 +27,37 @@ $(
             let result;
             if (localStorage.getItem('cirno-fund-oss-credential')) {
                 result = JSON.parse(localStorage.getItem('cirno-fund-oss-credential'));
-
                 return;
             }
             
             $.ajax({
                 url: 'api/security/credential',
                 method: 'GET',
+                headers: { 'authorization': localStorage.getItem('cirno-fund-jwt-token') },
                 async: async,
-                success(resp) {
-                    result = resp.Credentials;
-                    store = new OSS({
-                        accessKeyId: result.AccessKeyId,
-                        accessKeySecret: result.AccessKeySecret,
-                        stsToken: result.SecurityToken,
-                        region: 'oss-cn-hongkong',
-                        bucket: 'cirno-fund-assistance'
-                    });
-                    localStorage.setItem('cirno-fund-oss-credential', JSON.stringify(resp.Credentials));
+                success(resp, textStatus, request) {
+                    if (request.readyState === 4 && request.status === 200) {
+                        if (resp.data && resp.error_code === 0) {
+                            result = resp.data.Credentials;
+                            store = new OSS({
+                                accessKeyId: result.AccessKeyId,
+                                accessKeySecret: result.AccessKeySecret,
+                                stsToken: result.SecurityToken,
+                                region: 'oss-cn-hongkong',
+                                bucket: 'cirno-fund-assistance'
+                            });
+                            localStorage.setItem('cirno-fund-oss-credential', JSON.stringify(resp.Credentials));
+                        } else {
+                            R.showSnackbar(resp.message);
+                        }
+                    }else {
+                        console.log(resp)
+                        R.showSnackbar('Failed to get credential');
+                    }
+                },
+                error(err) {
+                    R.showSnackbar('Request error!');
+                    console.error(err);
                 }
             });
         };
@@ -148,19 +161,28 @@ $(
                     $.ajax({
                         url: '/analysis/api/data/figure',
                         method: 'POST',
-                        headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() },
+                        headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val(), 'authorization': localStorage.getItem('cirno-fund-jwt-token') },
                         contentType: 'application/json;charset=utf-8',
                         data: JSON.stringify(fixed_codes),
-                        success(resp) {
-                            if (resp.data) {
-                                lsc.fund.code_list = lsc.fund.code_list.concat(resp.data.fund.code_list);
-                                lsc.fund.code_name_list = lsc.fund.code_name_list.concat(resp.data.fund.code_name_list);
-                                localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(lsc));
-                                initCodeList(resp.data.fund.code_list, resp.data.fund.code_name_list);
-                                R.showSnackbar("添加成功");
+                        success(resp, textStatus, request) {
+                            if (request.readyState === 4 && request.status === 200) {
+                                if (resp.data && resp.error_code === 0) {
+                                    lsc.fund.code_list = lsc.fund.code_list.concat(resp.data.fund.code_list);
+                                    lsc.fund.code_name_list = lsc.fund.code_name_list.concat(resp.data.fund.code_name_list);
+                                    localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(lsc));
+                                    initCodeList(resp.data.fund.code_list, resp.data.fund.code_name_list);
+                                    R.showSnackbar("添加成功");
+                                } else {
+                                    R.showSnackbar(resp.message);
+                                }
                             } else {
-                                R.showSnackbar("Nothing to change!");
+                                console.log(resp);
+                                R.showSnackbar("Invalid http state");
                             }
+                        },
+                        err(err) {
+                            R.showSnackbar("Request error!");
+                            console.error(err);
                         }
                     });
                 } else {
@@ -178,14 +200,28 @@ $(
             } else {
                 $.ajax({
                     url: '/analysis/api/data/config',
+                    headers: { 'authorization': localStorage.getItem('cirno-fund-jwt-token') },
                     method: 'GET',
-                    success(resp) {
-                        let fund_codes = resp.data.fund.code_list,
-                            fund_names = resp.data.fund.code_name_list;
-                        if (fund_codes) {
-                            localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(resp.data));
-                            initCodeList(fund_codes, fund_names);
+                    success(resp, textStatus, request) {
+                        if (request.readyState === 4 && request.status === 200) {
+                            if (resp.data && resp.error_code === 0) {
+                                let fund_codes = resp.data.fund.code_list,
+                                    fund_names = resp.data.fund.code_name_list;
+                                if (fund_codes) {
+                                    localStorage.setItem('cirno-fund-simulation-config', JSON.stringify(resp.data));
+                                    initCodeList(fund_codes, fund_names);
+                                }
+                            }else {
+                                R.showSnackbar(resp.message);
+                            }
+                        }else {
+                            console.log(resp);
+                            R.showSnackbar('Invalid http state');
                         }
+                    },
+                    error(err) {
+                        R.showSnackbar('Request error!');
+                        console.error(err);
                     }
                 });
             }
@@ -269,20 +305,31 @@ $(
                     $.ajax({
                         url: '/analysis/api/data/figure',
                         method: 'POST',
-                        headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() },
+                        headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val(), 'authorization': localStorage.getItem('cirno-fund-jwt-token') },
                         contentType: 'application/json;charset=utf-8',
                         data: JSON.stringify(local_code_list),
-                        success(resp) {
-                            if (resp.data) {
-                                R.showSnackbar("更新成功");
-                            } else {
-                                R.showSnackbar("Nothing update!");
+                        
+                        success(resp, textStatus, request) {
+                            if (request.readyState === 4 && request.status === 200) {
+                                if (resp.data && resp.error_code === 0) {
+                                    if (resp.data) {
+                                        R.showSnackbar("更新成功");
+                                    } else {
+                                        R.showSnackbar("Nothing update!");
+                                    }
+                                    linearProgress.close();
+                                }else {
+                                    R.showSnackbar(resp.message);
+                                }
+                            }else {
+                                console.log(resp);
+                                R.showSnackbar('Invalid http state');
                             }
-                            linearProgress.close();
                         },
-                        error() {
+                        error(err) {
                             R.showSnackbar("Nothing update!");
                             linearProgress.close();
+                            console.error(err);
                         }
                     });
                 } else {

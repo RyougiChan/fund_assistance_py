@@ -21,4 +21,8 @@ oss:
     access_key_id: 'LTAI5tFmsc61Z4hNRDyVQ23w'
     access_key_secret: 'ivksyyYAjBYVXnCQMnaS490XncEK90'
     role_arn: 'acs:ram::1322471963412481:role/ramossrole'
-
+jwt:
+  secret: 'QA5jpk3z4Dg79CJ1WNwoaXFYb0tiHBxT'
+  algorithm: 'HS256'
+  expire_time_seconds: 1800
+  issuer: 'github.com/ryougichan'

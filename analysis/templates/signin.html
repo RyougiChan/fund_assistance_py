@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Trade</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link href="/static/style/material-components.min.css" rel="stylesheet">
+    <link href="/static/style/material-icon.css" rel="stylesheet">
+    <link href="/static/style/signin.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="mdc-drawer-app-content">
+        <main class="main-content" id="main-content">
+            <div class="mdc-card demo-card fund-code-list-card">
+                <div class="demo-card__primary">
+                    <h2 class="demo-card__title mdc-typography mdc-typography--headline6">Sign in</h2>
+                    <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">Welcome, please signin first
+                    </h3>
+                </div>
+                <div class="mdc-text-field">
+                    <input class="mdc-text-field__input" name="login_name" pattern="^\w{4,}$">
+                    <div class="mdc-line-ripple"></div>
+                    <label for="text-field-hero-input" class="mdc-floating-label">login name</label>
+                </div>
+                <div class="mdc-text-field">
+                    <input class="mdc-text-field__input" name="login_password" type="password" pattern="^\w{8,}$">
+                    <div class="mdc-line-ripple"></div>
+                    <label for="text-field-hero-input" class="mdc-floating-label">login password</label>
+                </div>
+                <div class="mdc-card__actions">
+                    <div class="mdc-card__action-buttons">
+                        <button class="mdc-button mdc-card__action mdc-card__action--button"
+                            data-action="chives-signin"> <span class="mdc-button__ripple"></span> 登入</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="mdc-snackbar">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false"></div>
+        </div>
+    </div>
+    <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate mdc-linear-progress--closed" aria-label="Example Progress Bar" aria-valuemin="0"
+        aria-valuemax="1" aria-valuenow="0">
+        <div class="mdc-linear-progress__buffer">
+            <div class="mdc-linear-progress__buffer-bar"></div>
+            <div class="mdc-linear-progress__buffer-dots"></div>
+        </div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+        </div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+        </div>
+    </div>
+    {% csrf_token %}
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+    <script src="/static/script/signin.js"></script>
+</body>
+
+</html>
