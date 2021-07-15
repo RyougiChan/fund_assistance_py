@@ -32,4 +32,4 @@ build/
 venv
 
 ### Static Data ###
-fund_assistance_py/analysis/data/
+fund_assistance_py/analysis/data
