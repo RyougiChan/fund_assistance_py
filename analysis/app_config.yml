@@ -26,3 +26,4 @@ jwt:
   algorithm: 'HS256'
   expire_time_seconds: 1800
   issuer: 'github.com/ryougichan'
+  enable: 1

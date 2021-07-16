@@ -14,7 +14,7 @@ class JwtMiddleware:
         # Code to be executed for each request before
         # the view (and later middleware) are called.
         # only ajax request need auth
-        if request.path != '/analysis/api/chives/signin' and (request.is_ajax() or request.path.startswith('/analysis/api/')):
+        if YConfig.get('jwt:enable') == 1 and request.path != '/analysis/api/chives/signin' and (request.is_ajax() or request.path.startswith('/analysis/api/')):
             request.chives = None
             jwt_token = request.headers.get('authorization', None)
             print(jwt_token)

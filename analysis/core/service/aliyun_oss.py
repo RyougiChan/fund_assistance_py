@@ -44,7 +44,7 @@ class AliyunOss:
     ) -> AssumeRoleResponse:
         client = AliyunOss.create_client(YConfig.get('oss:sts:access_key_id'), YConfig.get('oss:sts:access_key_secret'))
         assume_role_request = sts_20150401_models.AssumeRoleRequest(
-            duration_seconds=3600,
+            duration_seconds=1800,
             role_arn=YConfig.get('oss:sts:role_arn'),
             role_session_name='fund_assistance_session'
         )
@@ -58,7 +58,7 @@ class AliyunOss:
     ) -> AssumeRoleResponse:
         client = AliyunOss.create_client(YConfig.get('oss:sts:access_key_id'), YConfig.get('oss:sts:access_key_secret'))
         assume_role_request = sts_20150401_models.AssumeRoleRequest(
-            duration_seconds=3600,
+            duration_seconds=1800,
             role_arn=YConfig.get('oss:sts:role_arn'),
             role_session_name='fund_assistance_session'
         )

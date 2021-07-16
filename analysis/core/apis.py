@@ -21,7 +21,7 @@ def figure_data(request):
             return JsonResponse({})
         request_data = json.loads(request.body)
         code_name_list = []
-        print(request_data)
+        request_data.remove('')
         if len(request_data):
             init_data(request_data)
             SimulationTrade.init()
@@ -29,12 +29,14 @@ def figure_data(request):
             for code in request_data:
                 fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]
                 code_name_list.append(fund_name)
-        return JsonResponse({'data': {
+        resp = Errors.SUCCESS.__dict__
+        resp['data'] = {
             'fund': {
                 'code_list': request_data,
                 'code_name_list': code_name_list
             }
-        }})
+        }
+        return JsonResponse(resp)
     return JsonResponse(Errors.REQUEST_METHOD_ILLEGAL.__dict__)
 
 
@@ -63,6 +65,8 @@ def get_sts_access_cred(request):
     response = AliyunOss.get_sts_access_credential(sys.argv[1:])
     resp = Errors.SUCCESS.__dict__
     resp['data'] = response.body.to_map()
+    print(Errors.SUCCESS)
+    print(Errors.SUCCESS.__dict__)
     return JsonResponse(resp)
 
 
@@ -92,7 +96,10 @@ def chives_handler(request, action: str):
 
 def test(request, name):
     if name == 'add-chives':
+        print(request)
         a = add_chives('cirno', 'cirno0207')
         print(a)
+        print(Errors.SUCCESS)
+        print(Errors.SUCCESS.__dict__)
         return JsonResponse(Errors.SUCCESS.__dict__)
     return JsonResponse(Errors.REQUEST_ACTION_ILLEGAL.__dict__)
