@@ -39,6 +39,6 @@ def index(request):
     simulate_trade_data = os.listdir(get_path('data/image/simulation_trade'))
     context = {'simulate_trade_data': simulate_trade_data}
 
-    print(simulate_trade_data)
-
     return render(request, 'index.html', context)
+
+
