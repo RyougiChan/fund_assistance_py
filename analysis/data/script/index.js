@@ -125,7 +125,7 @@ $(
                 getStsAccessCredential(false);
             }
             let ossURL= store.signatureUrl(file);
-            return ossURL.replace(/http.*aliyuncs.com/ig, 'http://oss.cirnon.com');
+            return ossURL.replace(/http.*aliyuncs.com/ig, 'https://oss.cirnon.com');
         }
         // 初始化第三页的基金列表
         let initCodeList = (fund_codes, fund_names) => {
