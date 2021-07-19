@@ -3,7 +3,7 @@ import sys
 from datetime import datetime, timedelta
 
 import jwt
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 
 from analysis.conf.yconfig import YConfig
 from analysis.core.chives import add_chives
@@ -76,23 +76,23 @@ def chives_handler(request, action: str):
         if action == 'signin':
             try:
                 if Chives.objects.filter(login_name=post_data['login_name']).count() == 0:
-                    return HttpResponse(Errors.NOT_FOUND.__dict__, "application/json")
+                    return JsonResponse(Errors.NOT_FOUND.__dict__)
 
                 chives = Chives.objects.get(login_name=post_data['login_name'])
                 if chives.match_password(post_data['login_password']) is False:
-                    return HttpResponse(Errors.NOT_FOUND.__dict__, "application/json")
+                    return JsonResponse(Errors.NOT_FOUND.__dict__)
 
                 payload = {
                     'chives_id': chives.id,
                     'exp': datetime.utcnow() + timedelta(seconds=YConfig.get('jwt:expire_time_seconds'))
                 }
                 jwt_token = jwt.encode(payload, YConfig.get('jwt:secret'), YConfig.get('jwt:algorithm'))
-                resp = HttpResponse(Errors.SUCCESS.__dict__, "application/json")
+                resp = JsonResponse(Errors.SUCCESS.__dict__)
                 resp.headers['authorization'] = jwt_token
                 return resp
             except:
                 print(sys.exc_info())
-                return HttpResponse(Errors.UNKNOWN_ERROR.__dict__, "application/json")
+                return JsonResponse(Errors.UNKNOWN_ERROR.__dict__)
         if action == 'signout':
             return JsonResponse(Errors.SUCCESS.__dict__)
     return JsonResponse(Errors.REQUEST_METHOD_ILLEGAL.__dict__)
