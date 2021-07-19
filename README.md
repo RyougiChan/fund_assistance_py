@@ -13,17 +13,21 @@ Before you can start, the following dependencies need to be installed.
 - The following python dependencies
 
 ```sh
-pip install django akshare plotly kaleido PyJWT PyYAML aliyun-python-sdk-sts aliyun-python-sdk-core oss2 alibabacloud_sts20150401 timeloop
+pip install django akshare plotly kaleido PyJWT PyYAML aliyun-python-sdk-sts aliyun-python-sdk-core oss2 alibabacloud_sts20150401 timeloop chardet
 ```
 
 ## Usage
+
+For development environment
 
 ```sh
 cd <root of project>
 python manage.py runserver
 ```
 
-For server deployment, following this guide save my life: [【Djangoの本番環境構築】Ubuntu20.04,Python3.8,Nginx,Gunicorn,PostgreSQL](https://tomato-develop.com/django-ubuntu-python-nginx-gunicorn-postgresql/)
+For server deployment, following this guide save my life: [【Djangoの本番環境構築】Ubuntu20.04,Python3.8,Nginx,Gunicorn,PostgreSQL](https://tomato-develop.com/django-ubuntu-python-nginx-gunicorn-postgresql/), and be carefull when configuring `venv`[(Creation of virtual environments)](https://docs.python.org/3/library/venv.html).
+
+> Reference: [Install Python 3.8 on CentOS 7 / CentOS 8](https://computingforgeeks.com/how-to-install-python-3-on-centos/)
 
 ## Error recording
 
@@ -49,11 +53,11 @@ django.core.exceptions.ImproperlyConfigured: SQLite 3.9.0 or later is required (
 # Download source code
 wget https://www.sqlite.org/2019/sqlite-autoconf-3360000.tar.gz
 # Compile
-tar zxvf sqlite-autoconf-3360000.tar.gz 
+tar zxvf sqlite-autoconf-3360000.tar.gz
 cd sqlite-autoconf-3360000/
 ./configure --prefix=/usr/local
 make && make install
- 
+
 # Replace system low version sqlite3
 mv /usr/bin/sqlite3  /usr/bin/sqlite3_old
 ln -s /usr/local/bin/sqlite3   /usr/bin/sqlite3
