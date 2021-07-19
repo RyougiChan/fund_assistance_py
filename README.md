@@ -8,12 +8,13 @@ Some indicators are always used to predict stock's trends, for example, [MACD Os
 
 Before you can start, the following dependencies need to be installed.
 
-- Python with version>=3.7
-- pip
+- Python(version>=3.7)
+- pip3
 - The following python dependencies
 
 ```sh
-pip install django akshare plotly kaleido PyJWT PyYAML aliyun-python-sdk-sts aliyun-python-sdk-core oss2 alibabacloud_sts20150401 timeloop chardet
+pip3 install django akshare plotly kaleido PyJWT PyYAML aliyun-python-sdk-sts \
+    aliyun-python-sdk-core oss2 alibabacloud_sts20150401 timeloop chardet
 ```
 
 ## Usage
@@ -25,15 +26,16 @@ cd <root of project>
 python manage.py runserver
 ```
 
-For server deployment, following this guide save my life: [【Djangoの本番環境構築】Ubuntu20.04,Python3.8,Nginx,Gunicorn,PostgreSQL](https://tomato-develop.com/django-ubuntu-python-nginx-gunicorn-postgresql/), and be carefull when configuring `venv`[(Creation of virtual environments)](https://docs.python.org/3/library/venv.html).
+For server deployment, following this guide save my life: [【Djangoの本番環境構築】Ubuntu20.04,Python3.8,Nginx,Gunicorn,PostgreSQL](https://tomato-develop.com/django-ubuntu-python-nginx-gunicorn-postgresql/), and be careful when configuring `venv`[(Creation of virtual environments)](https://docs.python.org/3/library/venv.html).
 
-> Reference: [Install Python 3.8 on CentOS 7 / CentOS 8](https://computingforgeeks.com/how-to-install-python-3-on-centos/)
+> Other reference: [Install Python 3.8 on CentOS 7 / CentOS 8](https://computingforgeeks.com/how-to-install-python-3-on-centos/)
 
 ## Error recording
 
 ```sh
 # Python Error
-(<class 'AttributeError'>, AttributeError("'HttpResponse' object has no attribute 'headers'"), <traceback object at 0x7f46aeacae80>)
+(<class 'AttributeError'>, AttributeError("'HttpResponse' object has no attribute 'headers'"),
+<traceback object at 0x7f46aeacae80>)
 ```
 
 ```sh
