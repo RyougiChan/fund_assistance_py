@@ -74,21 +74,25 @@ def chives_handler(request, action: str):
     if request.method == 'POST':
         post_data = json.loads(request.body)
         if action == 'signin':
-            if Chives.objects.filter(login_name=post_data['login_name']).count() == 0:
-                return JsonResponse(Errors.NOT_FOUND.__dict__)
+            try:
+                if Chives.objects.filter(login_name=post_data['login_name']).count() == 0:
+                    return JsonResponse(Errors.NOT_FOUND.__dict__)
 
-            chives = Chives.objects.get(login_name=post_data['login_name'])
-            if chives.match_password(post_data['login_password']) is False:
-                return JsonResponse(Errors.NOT_FOUND.__dict__)
+                chives = Chives.objects.get(login_name=post_data['login_name'])
+                if chives.match_password(post_data['login_password']) is False:
+                    return JsonResponse(Errors.NOT_FOUND.__dict__)
 
-            payload = {
-                'chives_id': chives.id,
-                'exp': datetime.utcnow() + timedelta(seconds=YConfig.get('jwt:expire_time_seconds'))
-            }
-            jwt_token = jwt.encode(payload, YConfig.get('jwt:secret'), YConfig.get('jwt:algorithm'))
-            resp = JsonResponse(Errors.SUCCESS.__dict__)
-            resp.headers['authorization'] = jwt_token
-            return resp
+                payload = {
+                    'chives_id': chives.id,
+                    'exp': datetime.utcnow() + timedelta(seconds=YConfig.get('jwt:expire_time_seconds'))
+                }
+                jwt_token = jwt.encode(payload, YConfig.get('jwt:secret'), YConfig.get('jwt:algorithm'))
+                resp = JsonResponse(Errors.SUCCESS.__dict__)
+                resp.headers['authorization'] = jwt_token
+                return resp
+            except:
+                print(sys.exc_info())
+                return JsonResponse(Errors.UNKNOWN_ERROR.__dict__)
         if action == 'signout':
             return JsonResponse(Errors.SUCCESS.__dict__)
     return JsonResponse(Errors.REQUEST_METHOD_ILLEGAL.__dict__)
