@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'fund_assistance_py.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -122,11 +122,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-    BASE_DIR / 'analysis/data/',
-    BASE_DIR / 'analysis/static/',
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',
+#     BASE_DIR / 'analysis/data/',
+#     BASE_DIR / 'analysis/static/',
+# ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'analysis/data/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

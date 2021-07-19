@@ -32,4 +32,6 @@ build/
 venv
 
 ### Static Data ###
-analysis/data/
+analysis/data/html/
+analysis/data/image/
+analysis/data/raw/
