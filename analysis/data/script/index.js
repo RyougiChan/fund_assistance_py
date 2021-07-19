@@ -124,7 +124,8 @@ $(
             if (!store) {
                 getStsAccessCredential(false);
             }
-            return store.signatureUrl(file).replace('http://cirno-fund-assistance.oss-cn-hongkong.aliyuncs.com', 'http://oss.cirnon.com');
+            let ossURL= store.signatureUrl(file);
+            return ossURL.replace(/http.*aliyuncs.com/ig, 'http://oss.cirnon.com');
         }
         // 初始化第三页的基金列表
         let initCodeList = (fund_codes, fund_names) => {
