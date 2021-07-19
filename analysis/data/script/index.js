@@ -35,7 +35,7 @@ $(
                     region: 'oss-cn-hongkong',
                     bucket: 'cirno-fund-assistance',
                     // 30 minutes
-                    refreshSTSTokenInterval: 1800000,
+                    refreshSTSTokenInterval: 1800_000,
                     refreshSTSToken: async () => {
                         await fetch('api/security/credential', {
                             headers: { 'authorization': localStorage.getItem('cirno-fund-jwt-token') },
@@ -46,7 +46,7 @@ $(
                             let st = setTimeout(() => {
                                 localStorage.removeItem('cirno-fund-oss-credential');
                                 clearTimeout(st);
-                            }, 1800000);
+                            }, 1800_000);
                             return {
                                 accessKeyId: d.data.Credentials.AccessKeyId,
                                 accessKeySecret: d.data.Credentials.AccessKeySecret,
@@ -65,7 +65,6 @@ $(
                 async: async,
                 success(resp, textStatus, request) {
                     if (request.readyState === 4 && request.status === 200) {
-                        console.log('credential', resp.data)
                         if (resp.data && resp.error_code === 0) {
                             result = resp.data.Credentials;
                             store = new OSS({
@@ -75,7 +74,7 @@ $(
                                 region: 'oss-cn-hongkong',
                                 bucket: 'cirno-fund-assistance',
                                 // 30 minutes
-                                refreshSTSTokenInterval: 1800000,
+                                refreshSTSTokenInterval: 1800_000,
                                 refreshSTSToken: async () => {
                                     await fetch('api/security/credential', {
                                         headers: { 'authorization': localStorage.getItem('cirno-fund-jwt-token') },
@@ -86,7 +85,7 @@ $(
                                         let st = setTimeout(() => {
                                             localStorage.removeItem('cirno-fund-oss-credential');
                                             clearTimeout(st);
-                                        }, 1800000);
+                                        }, 1800_000);
                                         return {
                                             accessKeyId: d.data.Credentials.AccessKeyId,
                                             accessKeySecret: d.data.Credentials.AccessKeySecret,
@@ -99,7 +98,7 @@ $(
                             let t = setTimeout(() => {
                                 localStorage.removeItem('cirno-fund-oss-credential');
                                 clearTimeout(t);
-                            }, 1800000);
+                            }, 1800_000);
                         } else {
                             R.showSnackbar(resp.message);
                         }
