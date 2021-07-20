@@ -82,7 +82,9 @@ class AliyunOss:
     @staticmethod
     def put_objects(oss_path: str, local_files: list):
         for file in local_files:
+            print('上传oss', file)
             AliyunOss.put_object(oss_path + os.path.split(file)[1], file)
+            print('成功')
 
 
 if __name__ == '__main__':

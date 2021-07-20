@@ -21,8 +21,6 @@ def figure_data(request):
             return JsonResponse({})
         request_data = json.loads(request.body)
         code_name_list = []
-        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        print(request_data)
         if len(request_data):
             init_data(request_data)
             SimulationTrade.init()
