@@ -13,7 +13,7 @@ simulation_trade_params:
   sell_out_ratio: 10
 oss:
   ram:
-    endpoint: 'oss-cn-hongkong.aliyuncs.com'
+    endpoint: 'oss-cn-hongkong-internal.aliyuncs.com'
     access_key_id: 'LTAI5tHWqvCdpNKc3kSNoGcu'
     access_key_secret: 'BgTZs822WPiDBoENbi830nvLsNGy97'
   sts:
