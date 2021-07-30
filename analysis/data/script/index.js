@@ -118,13 +118,17 @@ $(
                 }
             });
         };
-        
+        // 为避免.html文件的默认下载行为，将阿里云oss的域名替换为自己的域名
         let getSignedUrl = (file) => {
-            if (!store) {
-                getStsAccessCredential(false);
+            let config = JSON.parse(localStorage.getItem('cirno-fund-simulation-config'));
+            if (config.oss.enable) {
+                if (!store) {
+                    getStsAccessCredential(false);
+                }
+                let ossURL= store.signatureUrl(file);
+                return ossURL.replace(/http.*aliyuncs.com/ig, 'https://oss.cirnon.com');
             }
-            let ossURL= store.signatureUrl(file);
-            return ossURL.replace(/http.*aliyuncs.com/ig, 'https://oss.cirnon.com');
+            return `/static/${file}`
         }
         // 初始化第三页的基金列表
         let initCodeList = (fund_codes, fund_names) => {

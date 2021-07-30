@@ -12,6 +12,7 @@ simulation_trade_params:
   # 卖出比例 %
   sell_out_ratio: 10
 oss:
+  enable: 0
   ram:
     endpoint: 'oss-accelerate.aliyuncs.com'
 #    endpoint: 'oss-cn-hongkong.aliyuncs.com'

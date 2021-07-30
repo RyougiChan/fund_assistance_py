@@ -40,7 +40,7 @@ def figure_data(request):
 
 
 def get_config_data():
-    config = {'fund': YConfig.get('fund')}
+    config = {'fund': YConfig.get('fund'), 'oss': {'enable': YConfig.get('oss:enable')}}
     code_name_list = []
     for code in config['fund']['code_list']:
         fund_name = FundData.fund_name_df.loc[FundData.fund_name_df['基金代码'] == code, '基金简称'].values[0]

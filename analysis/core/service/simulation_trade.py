@@ -169,19 +169,19 @@ class SimulationTrade:
             m_fig.update_xaxes(dtick="M1", tickformat="%d\n%b")
             m_fig.write_image(get_path('data/image/simulation_trade/{}-{}.png'.format(fund_name, code)))
             plotly.offline.plot(m_fig, filename=get_path('data/html/simulation_trade/{}-{}.html'.format(fund_name, code)), auto_open=False)
-
-        t1 = Thread(target=AliyunOss.put_objects,
-                    args=('html/simulation_trade/', absolute_file_paths(get_path('data/html/simulation_trade')),))
-        t2 = Thread(target=AliyunOss.put_objects,
-                    args=('image/simulation_trade/', absolute_file_paths(get_path('data/image/simulation_trade')),))
-        t3 = Thread(target=AliyunOss.put_objects,
-                    args=('html/bollinger_bands/', absolute_file_paths(get_path('data/html/bollinger_bands')),))
-        t4 = Thread(target=AliyunOss.put_objects,
-                    args=('image/bollinger_bands/', absolute_file_paths(get_path('data/image/bollinger_bands')),))
-        t1.start()
-        t2.start()
-        t3.start()
-        t4.start()
+        if YConfig.get('oss:enable') == 1:
+            t1 = Thread(target=AliyunOss.put_objects,
+                        args=('html/simulation_trade/', absolute_file_paths(get_path('data/html/simulation_trade')),))
+            t2 = Thread(target=AliyunOss.put_objects,
+                        args=('image/simulation_trade/', absolute_file_paths(get_path('data/image/simulation_trade')),))
+            t3 = Thread(target=AliyunOss.put_objects,
+                        args=('html/bollinger_bands/', absolute_file_paths(get_path('data/html/bollinger_bands')),))
+            t4 = Thread(target=AliyunOss.put_objects,
+                        args=('image/bollinger_bands/', absolute_file_paths(get_path('data/image/bollinger_bands')),))
+            t1.start()
+            t2.start()
+            t3.start()
+            t4.start()
 
         # 清算
         # 账户结余
