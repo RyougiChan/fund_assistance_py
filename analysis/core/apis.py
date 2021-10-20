@@ -106,3 +106,6 @@ def test(request, name):
         print(Errors.SUCCESS.__dict__)
         return JsonResponse(Errors.SUCCESS.__dict__)
     return JsonResponse(Errors.REQUEST_ACTION_ILLEGAL.__dict__)
+
+def test2():
+    '1'.format()
