@@ -1,0 +1,31 @@
+fund:
+  code_list: ["160629","166009","009571","519736","004856","161721","161725","008903","163415","007349","007355","010117","001714","005609","519069","009777","009551","001694","002562","162411","001701","001500","270023","000220","161028","010364","009179","010213","001553"]
+simulation_trade_params:
+  # 初始资金
+  init_balance: 300000
+  # 底仓资金
+  start_money: 10000
+  # 开始交易日
+  start_trade_date: '2020-01-01'
+  # 买入比例 %
+  buy_in_ratio: 30
+  # 卖出比例 %
+  sell_out_ratio: 10
+oss:
+  enable: 0
+  ram:
+    endpoint: 'oss-accelerate.aliyuncs.com'
+#    endpoint: 'oss-cn-hongkong.aliyuncs.com'
+    access_key_id: 'LTAI5tHWqvCdpNKc3kSNoGcu'
+    access_key_secret: 'BgTZs822WPiDBoENbi830nvLsNGy97'
+  sts:
+    endpoint: 'sts.cn-hongkong.aliyuncs.com'
+    access_key_id: 'LTAI5tFmsc61Z4hNRDyVQ23w'
+    access_key_secret: 'ivksyyYAjBYVXnCQMnaS490XncEK90'
+    role_arn: 'acs:ram::1322471963412481:role/ramossrole'
+jwt:
+  secret: 'QA5jpk3z4Dg79CJ1WNwoaXFYb0tiHBxT'
+  algorithm: 'HS256'
+  expire_time_seconds: 1800
+  issuer: 'github.com/ryougichan'
+  enable: 1
